@@ -14,9 +14,12 @@ const app = express();
 
 //starting point of routes which is the previous of "router.get(./)" in products.js
 const productRoutes = require('./api/routes/products');
+//starting point of routes which is the previous of "router.get(./)" in orders.js
+const orderRoutes = require('./api/routes/orders');
 
 //using a diff format of app.use with a filter as first argument
 app.use('/products', productRoutes);
 //we use ((req, res, next)) seq. in the appropriate folder
+app.use('/orders', orderRoutes);
 
 module.exports = app;
