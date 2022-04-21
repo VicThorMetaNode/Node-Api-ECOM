@@ -5,11 +5,18 @@ const express = require('express');
 //executing express as a function
 const app = express();
 
-//use incoming requests with arrow function + .json as stringify
-app.use((req, res, next) => {
-    res.status(200).json({
-        message: 'It works !'
-    });
-});
+//use ANY incoming requests with arrow function + .json as stringify
+// app.use((req, res, next) => {
+//     res.status(200).json({
+//         message: 'It works !'
+//     });
+// });
+
+//starting point of routes which is the previous of "router.get(./)" in products.js
+const productRoutes = require('./api/routes/products');
+
+//using a diff format of app.use with a filter as first argument
+app.use('/products', productRoutes);
+//we use ((req, res, next)) seq. in the appropriate folder
 
 module.exports = app;
