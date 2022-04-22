@@ -2,11 +2,15 @@
 //import express using require
 const express = require('express');
 
+//import morgan package for login incoming requests
+const morgan = require('morgan');
+
+//import body-parser: accepts only UTF-8 encoding of the body
+const bodyParser = require('body-parser');
+
 //executing express as a function
 const app = express();
 
-//import morgan package for login incoming requests
-const morgan = require('morgan');
 
 //use ANY incoming requests with arrow function + .json as stringify
 // app.use((req, res, next) => {
@@ -21,8 +25,27 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
 
-//using Morgan 
+//using MORGAN
 app.use(morgan('dev'));
+
+//using BODYPARSER to extract body requests
+app.use(bodyParser.urlencoded({extended:false}));
+//bodyParser stringify
+app.use(bodyParser.json());
+
+//append the HEADERS to any res we sent back
+//allow access of any origin + which kind of headers we want to accept
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, Content-Type, x-requested-with, Accept, Authorization");
+
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Method', 'POST, PUT, PATCH, DELETE');
+        return res.status(200).json({});
+    }
+    next();
+});
+
 
 
 //using a diff format of app.use with a filter as first argument
@@ -31,14 +54,14 @@ app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 
 
-//handling error 404
+//handling error 404: new Error is a Node built-in
 app.use((req, res, next) => {
-    const error = new Error('Route not Found');
+    let error = new Error('Route not Found');
     error.status = 404;
     next(error);
 })
 
-//handling error 500
+//handling any kind of error 404 or 500
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
