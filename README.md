@@ -1,8 +1,9 @@
 # Node-Api-ECOM
 Products & orders APi management using Express 
-📦NPM Packages: 
+📦NPM Packages used: 
 ✔️Nodemon : refresh server every time a change is made
 ✔️Morgan: create a logger middleware
+✔️Body-parser: parse incoming request bodies in a middleware before handlers
 
 
 
