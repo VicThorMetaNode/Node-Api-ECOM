@@ -1,5 +1,5 @@
 # Node-Api-ECOM
-APi management using Express 
+Products & orders APi management using Express 
 📦NPM Packages: 
 ✔️Nodemon : refresh server every time a change is made
 ✔️Morgan: create a logger middleware
