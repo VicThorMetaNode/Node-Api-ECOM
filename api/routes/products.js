@@ -12,8 +12,9 @@ router.get('/', (req, res, next) => {
     });
 });
 
+//set status code to 201 !
 router.post('/', (req, res, next) => {
-    res.status(200).json({
+    res.status(201).json({
         message: 'Handling POST requests from /products OK'
     });
 });
