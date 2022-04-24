@@ -4,6 +4,7 @@ Products & Orders **APi management** using **Express **
 <p>✔️Nodemon : refresh server every time a change is made</p>
 <p>✔️Morgan: create a logger middleware</p>
 <p>✔️Body-parser: parse incoming request bodies in a middleware before handlers</p>
+<p>✔️Mongoose: a MongoDB object modeling tool designed to work in an asynchronous environment</p>
 
 
 > This project is evolving during april 2022. Stay tuned for more updates
