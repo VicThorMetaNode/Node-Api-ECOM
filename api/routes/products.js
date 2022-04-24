@@ -1,6 +1,11 @@
 // import express using 'require' cause 'import' is not supported by Node
 const express = require('express');
 
+//import Mongoose
+const mongoose = require('mongoose');
+//import Models for product
+const Product = require('../models/product');
+
 
 //setup express router using a package as a function
 const router = express.Router();
@@ -13,11 +18,28 @@ router.get('/', (req, res, next) => {
 });
 
 //set status code to 201 !
-router.post('/', (req, res, next) => {
-    res.status(201).json({
-        message: 'Handling POST requests from /products OK'
+router.post("/", (req, res, next) => {
+    const product = new Product({
+      _id: new mongoose.Types.ObjectId(),
+      name: req.body.name,
+      price: req.body.price
     });
-});
+    product
+      .save()
+      .then(result => {
+        console.log(result);
+        res.status(201).json({
+          message: "Handling POST requests to /products",
+          createdProduct: result
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({
+          error: err
+        });
+      });
+  });
 
 //setup for details about single product using'/:' to mean any product with a name I create like productId
 //extract all parameters from specific product using const + req.params.productId

@@ -2,14 +2,17 @@
 //import express using require
 const express = require('express');
 
+//executing express as a function
+const app = express();
+
 //import morgan package for login incoming requests
 const morgan = require('morgan');
 
 //import body-parser: accepts only UTF-8 encoding of the body
 const bodyParser = require('body-parser');
 
-//executing express as a function
-const app = express();
+//import Mongoose
+const mongoose = require('mongoose');
 
 
 //use ANY incoming requests with arrow function + .json as stringify
@@ -24,6 +27,12 @@ const productRoutes = require('./api/routes/products');
 //starting point of routes which is the previous of "router.get(./)" in orders.js
 const orderRoutes = require('./api/routes/orders');
 
+//Mongoose connection
+mongoose.connect('mongodb+srv://VTMN:30f27lqeDAeJ4bTj@node-api-ecom.u8cxa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', 
+{
+    useNewUrlParser: true
+}
+);
 
 //using MORGAN
 app.use(morgan('dev'));
@@ -45,7 +54,6 @@ app.use((req, res, next) => {
     }
     next();
 });
-
 
 
 //using a diff format of app.use with a filter as first argument
