@@ -43,18 +43,25 @@ router.post("/", (req, res, next) => {
 
 //setup for details about single product using'/:' to mean any product with a name I create like productId
 //extract all parameters from specific product using const + req.params.productId
+//NOTICE: we res.status(200) inside .then to be sure it is call before err (synchronous)
 router.get('/:productId', (req, res, next) => {
      const id = req.params.productId;
-     if (id === 'special') {
-         res.status(200).json({
-             message: 'You discovered the special ID',
-             id: id
+     Product.findById(id)
+     .exec()
+     .then(doc => {
+       console.log("From database", doc);
+       if (doc) {
+        res.status(200).json(doc);
+       } else {
+         res.status(404).json({
+           message: 'No valid entry found'
          });
-     } else {
-         res.status(200).json({
-             message : 'You passed an ID'
-         });
-     }
+       }
+     })
+     .catch(err => {
+       console.log(err);
+       res.status(500).json({error: err});
+     });
 });
 
 router.patch('/:productId', (req, res, next) => {
