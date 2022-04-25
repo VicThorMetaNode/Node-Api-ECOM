@@ -11,10 +11,28 @@ const Product = require('../models/product');
 const router = express.Router();
 
 //now we can use the router to define different routes
+//docs = products in this case
+//Product.find(empty) = all docs
 router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'Handling GET requests from /products OK'
+  Product.find()
+  .exec()
+  .then(docs => {
+    console.log(docs);
+// the if statement is not necessary cause 404 error is for empty array
+    if (docs.length >= 0) {
+      res.status(200).json(docs);
+    } else {
+      res.status(404).json({
+        message: 'No entries found'
+      })
+    }
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({
+      error: err
     });
+  });
 });
 
 //set status code to 201 !
@@ -70,9 +88,18 @@ router.patch('/:productId', (req, res, next) => {
     });
 });
 
+//using filter criteria + _id
+//_id = property / id = value
 router.delete('/:productId', (req, res, next) => {
-    res.status(200).json({
-        message: 'Deleted product !'
+  const id = req.params.productId;
+    Product.deleteMany({_id: id})
+    .exec()
+    .then(result => {
+      res.status(200).json(result);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({error: err});
     });
 });
 
