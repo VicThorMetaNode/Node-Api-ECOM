@@ -82,11 +82,30 @@ router.get('/:productId', (req, res, next) => {
      });
 });
 
+//update using updateMany method after identifier for the object + how to update it as second argument{$set:}
 router.patch('/:productId', (req, res, next) => {
-    res.status(200).json({
-        message: 'Updated product !'
+  const id = req.params.productId;
+//check if we want to update just a single argument: name or price or... declaring a new const + a loop through all operations (ops)
+  const updateOps = {};
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value; // value = { name: req.body.newName, price: req.body.newPrice } *
+  }
+
+  Product.replaceOne({ _id: id }, { $set: updateOps })
+    .exec()
+    .then(result => {
+      console.log(result);
+      res.status(200).json(result);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
+      });
     });
 });
+
+//* to make any change we ask for an array [] in which we use props ex: [{ "propName" : "anyname"}]
 
 //using filter criteria + _id
 //_id = property / id = value
