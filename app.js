@@ -34,6 +34,9 @@ mongoose.connect('mongodb+srv://VTMN:30f27lqeDAeJ4bTj@node-api-ecom.u8cxa.mongod
 }
 );
 
+//to avoid DeprecationWarning from Mongoose
+mongoose.Promise = global.Promise;
+
 //using MORGAN
 app.use(morgan('dev'));
 
