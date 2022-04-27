@@ -10,9 +10,8 @@ const Product = require('../models/product');
 //setup express router using a package as a function
 const router = express.Router();
 
-//now we can use the router to define different routes
-//docs = products in this case
-//Product.find(empty) = all docs
+//find all items
+//Product.find(empty) = all docs = all products
 router.get('/', (req, res, next) => {
   Product.find()
   .select('name price _id')
@@ -51,7 +50,7 @@ const response = {
   });
 });
 
-//set status code to 201 !
+//Schema based on product.js in Models file
 router.post("/", (req, res, next) => {
     const product = new Product({
       _id: new mongoose.Types.ObjectId(),
@@ -62,7 +61,7 @@ router.post("/", (req, res, next) => {
       .save()
       .then(result => {
         console.log(result);
-        res.status(201).json({
+        res.status(201).json({ //set status code to 201 !
           message: "Created Successfully !",
           createdProduct: 
             {
@@ -86,7 +85,6 @@ router.post("/", (req, res, next) => {
 
 //setup for details about single product using'/:' to mean any product with a name I create like productId
 //extract all parameters from specific product using const + req.params.productId
-//NOTICE: we res.status(200) inside .then to be sure it is call before err (synchronous)
 router.get('/:productId', (req, res, next) => {
      const id = req.params.productId;
      Product.findById(id)
@@ -95,7 +93,7 @@ router.get('/:productId', (req, res, next) => {
      .then(doc => {
        console.log("From database", doc);
        if (doc) {
-        res.status(200).json({
+        res.status(200).json({//NOTICE: we call res.status(200) inside .then to be sure it is call before err (synchronous)
           product: doc,
           request: {
             type: 'GET',
