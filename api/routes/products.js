@@ -1,16 +1,45 @@
 // import express using 'require' cause 'import' is not supported by Node
 const express = require('express');
 
+//setup express router using a package as a function
+const router = express.Router();
+
 //import Mongoose
 const mongoose = require('mongoose');
+
+//import Multer
+const multer = require('multer');
+
+
+//setup Multer Storage
+//using multer.diskStorage we must provide 2 properties: a destination which is a fct telling where the file should be stored + a filename which is a fct telling how the file should be named
+//cb = callback
+// cb in destination: null = catch potential error + the patch where you want to store the file
+//cb filename: new Date()... = get the current date in string format + original name for instance check doc for more
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/')
+  },
+  filename: function(req, file, cb){
+    cb(null, new Date().toISOString() + file.originalname);
+  }
+});
+
+//setup multer route for uploaded files: storage: storage = const destination
+const upload = multer({storage: storage});
+
+
+
+
 //import Models for product
 const Product = require('../models/product');
 
 
-//setup express router using a package as a function
-const router = express.Router();
 
-//find all items
+
+//------------- GET ALL-PRODUCTS LIST -----------------
+
+
 //Product.find(empty) = all docs = all products
 router.get('/', (req, res, next) => {
   Product.find()
@@ -50,8 +79,15 @@ const response = {
   });
 });
 
+
+
+//------------- ADD PRODUCTS -----------------
+
+
 //Schema based on product.js in Models file
-router.post("/", (req, res, next) => {
+//upload.single = multer 
+router.post("/", upload.single('productImage'), (req, res, next) => {
+  console.log(req.file);
     const product = new Product({
       _id: new mongoose.Types.ObjectId(),
       name: req.body.name,
@@ -83,6 +119,12 @@ router.post("/", (req, res, next) => {
       });
   });
 
+
+
+
+  //------------- GET PRODUCT BY ID -----------------
+
+
 //setup for details about single product using'/:' to mean any product with a name I create like productId
 //extract all parameters from specific product using const + req.params.productId
 router.get('/:productId', (req, res, next) => {
@@ -112,6 +154,11 @@ router.get('/:productId', (req, res, next) => {
        res.status(500).json({error: err});
      });
 });
+
+
+
+//------------- UPDATE PRODUCTS -----------------
+
 
 //update using updateMany method after identifier for the object + how to update it as second argument{$set:}
 router.patch('/:productId', (req, res, next) => {
@@ -144,6 +191,12 @@ router.patch('/:productId', (req, res, next) => {
 
 
 //* to make any change we ask for an array [] in which we use props ex: [{ "propName" : "any name"}]
+
+
+
+//------------- DELETE PRODUCT -----------------
+
+
 
 //using filter criteria + _id
 //_id = property / id = value

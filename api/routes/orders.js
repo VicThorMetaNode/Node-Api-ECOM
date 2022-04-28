@@ -1,21 +1,24 @@
 // import express using 'require' cause 'import' is not supported by Node
 const express = require('express');
 
+//setup express router using a package as a function
+const router = express.Router();
+
 //import Mongoose
 const mongoose = require('mongoose');
 
-//import Models for order
+
+
+
+//import Models for order and product
 const Order = require('../models/order');
 const Product = require('../models/product');
-
-
-//setup express router using a package as a function
-const router = express.Router();
 
 //find all orders
 router.get('/', (req, res, next) => {
     Order.find()
     .select('product quantity _id')
+    .populate('product', 'name')
     .exec()
     .then(docs => {
    //console.log(docs);
@@ -93,6 +96,7 @@ Product.findById(req.body.productId)
 //extract all parameters from specific product using const + req.params.orderId
 router.get('/:orderId', (req, res, next) => {
     Order.findById(req.params.orderId)
+     .populate('product')
      .exec()
      .then(order => {
          if (!order) {
