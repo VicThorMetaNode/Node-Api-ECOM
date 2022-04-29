@@ -8,7 +8,7 @@ Products & Orders, Users SignUp & Login **APi management** using **Express **
 <p>✔️Multer: middleware for handling multipart/form-data, primarily used for uploading files</p>
 <p>✔️Mongoose: object modeling tool designed to work in an asynchronous environment</p>
 <p>✔️Bcrypt: library to help hash passwords</p>
-
+<p>✔️JSONwebtoken: an open standard for securely transferring data within parties using a JSON object</p>
 
 > This project is evolving during april 2022. Stay tuned for more updates
 
