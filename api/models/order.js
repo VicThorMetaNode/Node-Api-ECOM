@@ -1,4 +1,4 @@
-//define how a order should looks like
+//define how a order should look like
 
 //import Mongoose
 const mongoose = require('mongoose');

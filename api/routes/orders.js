@@ -8,11 +8,14 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 
-
-
 //import Models for order and product
 const Order = require('../models/order');
 const Product = require('../models/product');
+
+
+
+//------------- GET ALL-ORDERS LIST -----------------
+
 
 //find all orders
 router.get('/', (req, res, next) => {
@@ -47,6 +50,8 @@ router.get('/', (req, res, next) => {
 });
 
 
+
+//------------- ADD ORDERS -----------------
 
 
 //Schema based on order.js in Models file
@@ -92,7 +97,10 @@ Product.findById(req.body.productId)
   });
 
 
-//setup for details about single order using'/:' to mean any order with a name I create like productId
+
+  //------------- GET ORDER BY ID -----------------
+
+//setup for details about single order using '/:' means 'any order with a name' like productId
 //extract all parameters from specific product using const + req.params.orderId
 router.get('/:orderId', (req, res, next) => {
     Order.findById(req.params.orderId)

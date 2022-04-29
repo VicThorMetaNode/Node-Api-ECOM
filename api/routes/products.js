@@ -17,16 +17,34 @@ const multer = require('multer');
 // cb in destination: null = catch potential error + the patch where you want to store the file
 //cb filename: new Date()... = get the current date in string format + original name for instance check doc for more
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './uploads/')
+  destination: function(req, file, cb) {
+    cb(null, './uploads/');
   },
-  filename: function(req, file, cb){
-    cb(null, new Date().toISOString() + file.originalname);
+  filename: function(req, file, cb) {
+    cb(null, Date.now() + file.originalname);
   }
 });
 
+
+// setup multer filter
+//mimetype = multer typo
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true); //accept the file
+  } else {
+    cb(new Error('message'), false); //reject the file
+  }
+};
+
+
 //setup multer route for uploaded files: storage: storage = const destination
-const upload = multer({storage: storage});
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5 //set file size: in this case: max 5 mb
+  },
+  fileFilter: fileFilter
+});
 
 
 
@@ -43,7 +61,7 @@ const Product = require('../models/product');
 //Product.find(empty) = all docs = all products
 router.get('/', (req, res, next) => {
   Product.find()
-  .select('name price _id')
+  .select('name price _id productImage')
   .exec()
   .then(docs => {
     // console.log(docs);
@@ -54,6 +72,7 @@ const response = {
     return {
       name: doc.name,
       price: doc.price,
+      productImage: doc.productImage,
       _id: doc._id,
       request: {
         type: 'GET',
@@ -87,11 +106,11 @@ const response = {
 //Schema based on product.js in Models file
 //upload.single = multer 
 router.post("/", upload.single('productImage'), (req, res, next) => {
-  console.log(req.file);
     const product = new Product({
       _id: new mongoose.Types.ObjectId(),
       name: req.body.name,
-      price: req.body.price
+      price: req.body.price,
+      productImage: req.file.path
     });
     product
       .save()
@@ -130,7 +149,7 @@ router.post("/", upload.single('productImage'), (req, res, next) => {
 router.get('/:productId', (req, res, next) => {
      const id = req.params.productId;
      Product.findById(id)
-     .select('name price _id')
+     .select('name price _id productImage')
      .exec()
      .then(doc => {
        console.log("From database", doc);
@@ -206,7 +225,12 @@ router.delete('/:productId', (req, res, next) => {
     .exec()
     .then(result => {
       res.status(200).json({
-        message: 'Item deleted'
+        message: 'Item deleted',
+        request: {
+          type: 'POST',
+          url:'http://localhost:3000/products/',
+          body: { name: 'String', price: 'Number' }
+        }
       });
     })
     .catch(err => {

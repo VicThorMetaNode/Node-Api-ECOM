@@ -22,12 +22,20 @@ const mongoose = require('mongoose');
 //     });
 // });
 
+
+//------------- IMPORT ROUTES ---------------
+
 //starting point of routes which is the previous of "router.get(./)" in products.js
 const productRoutes = require('./api/routes/products');
 //starting point of routes which is the previous of "router.get(./)" in orders.js
 const orderRoutes = require('./api/routes/orders');
+//starting point of routes which is the previous of "router.get(./)" in users.js
+const userRoutes = require('./api/routes/users');
 
-//Mongoose connection
+
+
+//------------- MONGOOSE CONNECTION ---------------
+
 mongoose.connect('mongodb+srv://VTMN:30f27lqeDAeJ4bTj@node-api-ecom.u8cxa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', 
 {
     useNewUrlParser: true
@@ -37,33 +45,54 @@ mongoose.connect('mongodb+srv://VTMN:30f27lqeDAeJ4bTj@node-api-ecom.u8cxa.mongod
 //to avoid DeprecationWarning from Mongoose
 mongoose.Promise = global.Promise;
 
+
+//------------- PACKAGES ---------------
+
 //using MORGAN
 app.use(morgan('dev'));
-
-//using BODYPARSER to extract body requests
-app.use(bodyParser.urlencoded({extended:false}));
-//bodyParser stringify
+//using MULTER + making upload folder publicly available
+app.use('/uploads', express.static('uploads'));
+//using bodyParser stringify
 app.use(bodyParser.json());
+//using BODY PARSER to extract body requests
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+
+
+//------------- HEADER SPECIFY ---------------
 
 //append the HEADERS to any res we sent back
 //allow access of any origin + which kind of headers we want to accept
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, Content-Type, x-requested-with, Accept, Authorization");
-
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Method', 'POST, PUT, PATCH, DELETE');
-        return res.status(200).json({});
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    if (req.method === "OPTIONS") {
+      res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+      return res.status(200).json({});
     }
     next();
-});
+  });
 
+
+
+
+//------------- ROUTES which handle requests ---------------
 
 //using a diff format of app.use with a filter as first argument
 app.use('/products', productRoutes);
 //we use ((req, res, next)) seq. in the appropriate folder
 app.use('/orders', orderRoutes);
+//we use ((req, res, next)) seq. in the appropriate folder
+app.use('/users', userRoutes);
 
+
+
+
+//------------- ERRORS Handlers ---------------
 
 //handling error 404: new Error is a Node built-in
 app.use((req, res, next) => {
@@ -81,5 +110,8 @@ app.use((error, req, res, next) => {
         }
     })
 })
+
+
+
 
 module.exports = app;
