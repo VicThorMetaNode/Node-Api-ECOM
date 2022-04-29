@@ -7,7 +7,7 @@ Products & Orders, Users SignUp & Login **APi management** using **Express **
 <p>✔️Body-parser: parse incoming request bodies in a middleware before handlers</p>
 <p>✔️Multer: middleware for handling multipart/form-data, primarily used for uploading files</p>
 <p>✔️Mongoose: object modeling tool designed to work in an asynchronous environment</p>
-<p>✔️bcrypt: library to help hash passwords</p>
+<p>✔️Bcrypt: library to help hash passwords</p>
 
 
 > This project is evolving during april 2022. Stay tuned for more updates
