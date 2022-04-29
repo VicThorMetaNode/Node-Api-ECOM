@@ -14,6 +14,9 @@ const User = require('../models/user');
 //import encrypt package
 const bcrypt = require('bcrypt');
 
+//import Token Creator package
+const jwt = require('jsonwebtoken');
+
 
 
 
@@ -62,6 +65,48 @@ router.post('/signup', (req, res, next) => {
 });
 
 
+//------------- LOGIN USERS -----------------
+router.post("/login", (req, res, next) => {
+ User.find({ email: req.body.email})
+ .exec()
+ .then( user => {
+   if (user.length < 1) { //if we have no match w/ an existing user then return 401 =  lacks valid authentication credentials
+     return res.status(401).json({
+         message: ' Authentication failed ! '
+     });
+   }
+   bcrypt.compare(req.body.password, user[0].password, (err, result) => { //if password don't match the one the user used to sign up, then return 401 = lacks valid authentication credentials
+     if (err) {
+       return res.status(401).json({
+        message: ' Authentication failed ! '
+      });
+     }
+     if (result) {
+       const token = jwt.sign({ //generate a token if access granted
+         email: user[0].email,
+         userId: user[0]._id
+       }, process.env.JWT_KEY, {//private key sits in env.var file
+           expiresIn: "1h"    // options sit here
+       } 
+      ); 
+      return res.status(200).json({
+       message: ' Access Granted ! ',
+       token: token
+     });
+    }
+    res.status(401).json({
+      message: ' Authentication failed ! '
+    });
+   });
+ })
+.catch(err => {
+  console.log(err);
+  res.status(500).json({
+    error: err
+  });
+ });
+});
+
 //------------- DELETE USERS -----------------
 
 router.delete('/:userId', (req, res, next) => {
@@ -77,18 +122,6 @@ router.delete('/:userId', (req, res, next) => {
       res.status(500).json({error: err});
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
