@@ -10,6 +10,9 @@ const mongoose = require('mongoose');
 //import Multer
 const multer = require('multer');
 
+//import Check-Auth
+const checkAuth = require('../middleware/check-auth');
+
 
 //setup Multer Storage
 //using multer.diskStorage we must provide 2 properties: a destination which is a fct telling where the file should be stored + a filename which is a fct telling how the file should be named
@@ -105,7 +108,7 @@ const response = {
 
 //Schema based on product.js in Models file
 //upload.single = multer 
-router.post("/", upload.single('productImage'), (req, res, next) => {
+router.post("/", checkAuth, upload.single('productImage'), (req, res, next) => {
     const product = new Product({
       _id: new mongoose.Types.ObjectId(),
       name: req.body.name,
@@ -180,7 +183,7 @@ router.get('/:productId', (req, res, next) => {
 
 
 //update using updateMany method after identifier for the object + how to update it as second argument{$set:}
-router.patch('/:productId', (req, res, next) => {
+router.patch('/:productId', checkAuth, (req, res, next) => {
   const id = req.params.productId;
 //check if we want to update just a single argument: name or price or ... declaring a new const + a loop through all operations (ops)
   // const updateOps = {};
@@ -219,7 +222,7 @@ router.patch('/:productId', (req, res, next) => {
 
 //using filter criteria + _id
 //_id = property / id = value
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', checkAuth, (req, res, next) => {
   const id = req.params.productId;
     Product.deleteMany({_id: id})
     .exec()

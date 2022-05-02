@@ -82,7 +82,7 @@ router.post("/login", (req, res, next) => {
       });
      }
      if (result) {
-       const token = jwt.sign({ //generate a token if access granted
+       const token = jwt.sign({ //generate a token if info match
          email: user[0].email,
          userId: user[0]._id
        }, process.env.JWT_KEY, {//private key sits in env.var file
@@ -106,6 +106,8 @@ router.post("/login", (req, res, next) => {
   });
  });
 });
+
+
 
 //------------- DELETE USERS -----------------
 

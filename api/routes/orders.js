@@ -7,6 +7,9 @@ const router = express.Router();
 //import Mongoose
 const mongoose = require('mongoose');
 
+//import Check-Auth
+const checkAuth = require('../middleware/check-auth');
+
 
 //import Models for order and product
 const Order = require('../models/order');
@@ -18,7 +21,7 @@ const Product = require('../models/product');
 
 
 //find all orders
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
     Order.find()
     .select('product quantity _id')
     .populate('product', 'name')
@@ -55,7 +58,7 @@ router.get('/', (req, res, next) => {
 
 
 //Schema based on order.js in Models file
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth, (req, res, next) => {
 //make sure we can't create an order for product we don't have
 Product.findById(req.body.productId)
 .then(product => {
@@ -102,7 +105,7 @@ Product.findById(req.body.productId)
 
 //setup for details about single order using '/:' means 'any order with a name' like productId
 //extract all parameters from specific product using const + req.params.orderId
-router.get('/:orderId', (req, res, next) => {
+router.get('/:orderId', checkAuth, (req, res, next) => {
     Order.findById(req.params.orderId)
      .populate('product')
      .exec()
@@ -128,7 +131,7 @@ router.get('/:orderId', (req, res, next) => {
           });
 });
 
-router.delete('/:orderId', (req, res, next) => {
+router.delete('/:orderId', checkAuth, (req, res, next) => {
     Order.remove({ _id: req.params.orderId })
     .exec()
     .then(result => {
